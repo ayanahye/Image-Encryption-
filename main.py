@@ -27,7 +27,7 @@ def image_to_bits(image_path):
     encrypted_data = fernet.encrypt(compressed_data)
 
     #print("Original Data: ", compressed_data)
-    print("Encrypted Data: ", encrypted_data)
+    #print("Encrypted Data: ", encrypted_data)
 
 
     return encrypted_data, img.width, img.height, fernet

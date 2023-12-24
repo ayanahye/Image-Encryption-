@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Encrypt and Decrypt</title>
+    <link href="{{ url_for('static', filename='style.css')}}" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <h1>Image Encryption and Decryption</h1>
+    <form>
+        <label for="encrypt">Encrypt</label>
+        <input type="file" id="encrypt" name="encrypt" accept="image/*">
+        <input type="submit" value="Encrypt">
+    </form>
+    <form>
+        <label for="decrypt">Decrypt</label>
+        <input type="text" id="decrypt" name="decrypt">
+        <input type="submit" value="Decrypt">
+    </form>
+</body>
+</html>
