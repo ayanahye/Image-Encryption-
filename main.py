@@ -1,6 +1,7 @@
 import base64
 import zlib
 from PIL import Image
+from cryptography.fernet import Fernet
 
 def image_to_bits(image_path):
     valid_extensions = {'jpg', 'jpeg', 'png'}
@@ -20,11 +21,23 @@ def image_to_bits(image_path):
         blue_channel = ''.join(format(pixel[2], '08b') for pixel in pixels)
 
     compressed_data = zlib.compress((red_channel + green_channel + blue_channel).encode('utf-8'))
+    key_F = Fernet.generate_key()
+    fernet = Fernet(key_F)
 
-    return compressed_data, img.width, img.height
+    encrypted_data = fernet.encrypt(compressed_data)
 
-def bits_to_image(binary_data, width, height, output_path):
-    decompressed_data = zlib.decompress(binary_data).decode('utf-8')
+    #print("Original Data: ", compressed_data)
+    print("Encrypted Data: ", encrypted_data)
+
+
+    return encrypted_data, img.width, img.height, fernet
+
+def bits_to_image(encrypted_data, width, height, output_path, fernet):
+    decrypted_data = fernet.decrypt(encrypted_data)
+    #print("Decrypted Data: ", decrypted_data)
+
+    decompressed_data = zlib.decompress(decrypted_data).decode('utf-8')
+
     red_channel = decompressed_data[:width * height * 8]
     green_channel = decompressed_data[width * height * 8:2 * width * height * 8]
     blue_channel = decompressed_data[2 * width * height * 8:]
@@ -42,12 +55,13 @@ def bits_to_image(binary_data, width, height, output_path):
 
 def main():
     image_path = 'cat.jpg'
-    text_data, width, height = image_to_bits(image_path)
-    print(text_data)
+    key_U = input("Enter any key to begin: ")
+    encrypted_data, width, height, fernet = image_to_bits(image_path)
+    #print(text_data)
 
     output_path = 'reconstruct_image.jpg'
 
-    bits_to_image(text_data, width, height, output_path)
+    bits_to_image(encrypted_data, width, height, output_path, fernet)
 
 if __name__ == "__main__":
     main()
