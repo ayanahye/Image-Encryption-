@@ -2,6 +2,16 @@ import base64
 import zlib
 from PIL import Image
 from cryptography.fernet import Fernet
+import numpy as np
+
+def pixelize_image(image_path, pixel_size):
+    img = Image.open(image_path)
+    small_img = img.resize(
+        (img.width // pixel_size, img.height // pixel_size),
+        resample=Image.Resampling.NEAREST
+    )
+    pixelized_img = small_img.resize(img.size, Image.Resampling.NEAREST)
+    return pixelized_img
 
 def image_to_bits(image_path):
     valid_extensions = {'jpg', 'jpeg', 'png'}
@@ -55,13 +65,18 @@ def bits_to_image(encrypted_data, width, height, output_path, fernet):
 
 def main():
     image_path = 'cat.jpg'
-    key_U = input("Enter any key to begin: ")
+    pixel_size = 70  
+    output_path = 'pixelized_image.jpg'
+
+    pixelized_img = pixelize_image(image_path, pixel_size)
+    pixelized_img.save(output_path)
+
     encrypted_data, width, height, fernet = image_to_bits(image_path)
-    #print(text_data)
 
-    output_path = 'reconstruct_image.jpg'
+    with open('encrypted_data.bin', 'wb') as file:
+        file.write(encrypted_data)
 
-    bits_to_image(encrypted_data, width, height, output_path, fernet)
+    bits_to_image(encrypted_data, width, height, 'reconstructed_image.jpg', fernet)
 
 if __name__ == "__main__":
     main()

@@ -8,15 +8,20 @@
 </head>
 <body>
     <h1>Image Encryption and Decryption</h1>
-    <form>
-        <label for="encrypt">Encrypt</label>
-        <input type="file" id="encrypt" name="encrypt" accept="image/*">
-        <input type="submit" value="Encrypt">
-    </form>
-    <form>
-        <label for="decrypt">Decrypt</label>
-        <input type="text" id="decrypt" name="decrypt">
-        <input type="submit" value="Decrypt">
-    </form>
+        <img src="{{ image_path }}" alt="Uploaded/Encrypted/Decrypted Image" style="max-width: 400px;"/>
+        <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+            <label for="encrypt">Encrypt</label>
+            <input type="file" id="encrypt" name="file" accept="image/*">
+            <input type="submit" value="Encrypt">
+        </form>
+        { % if value %} 
+        <p>{{value}}</p>
+    {% if image_path %}
+        <form action="{{ url_for('decrypt') }}" method="post">
+            <image class="img" src="{{ url_for('static', filename='images/{{ image_path }}')}}" rel="stylesheet" type="text/css" /> 
+            <label for="decrypt">Decrypt</label>
+            <input type="submit" value="Decrypt">
+        </form>
+    {% endif %}
 </body>
 </html>
