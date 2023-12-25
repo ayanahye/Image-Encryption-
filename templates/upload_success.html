@@ -8,7 +8,9 @@
 <body>
     <h1>Upload Successful</h1>
     <p>Your image has been encrypted successfully.</p>
-    
+    {% if uploaded_image %}
+    <img src="{{ uploaded_image }}" alt="Uploaded Image">
+    {% endif %}
     <a href="{{ encrypted_path }}" download="encrypted_image.bin">
         Download Encrypted Image
     </a>

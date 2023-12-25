@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, url_for
 from PIL import Image
 import os
 import base64
@@ -154,14 +154,17 @@ def upload():
 
     password = request.form['password']
 
+    uploaded_path = 'static/uploaded_image.jpg'
+    file.save(uploaded_path)
+
     img = Image.open(file)
 
     encrypted_data, fernet = encrypt_image(img, password)
-
     encrypted_path = 'static/encrypted_data.bin'
-    with open(encrypted_path, 'wb') as file:
-        file.write(encrypted_data)
-    return render_template('upload_success.html', encrypted_path=encrypted_path)
+    with open(encrypted_path, 'wb') as encrypted_file:
+        encrypted_file.write(encrypted_data)
+
+    return render_template('upload_success.html', encrypted_path=url_for('static', filename='encrypted_data.bin'), uploaded_image=uploaded_path)
 
 @app.route('/download/<password>')
 def download(password):
