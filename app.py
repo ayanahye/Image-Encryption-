@@ -52,9 +52,20 @@ def upload():
     #print(encrypted_data)
 
     file_name = f'encrypted_image.png'
+    encrypted_image_path = 'static/images/encrypted_image.png'
 
-    return send_file(BytesIO(encrypted_data), as_attachment=True, download_name=file_name)
+    #return send_file(BytesIO(encrypted_data), as_attachment=True, download_name=file_name)
 
+    original_image_data = BytesIO()
+    img.save(original_image_data, format='PNG')
+    original_image_data.seek(0)
+
+    original_image_base64 = base64.b64encode(original_image_data.read()).decode('utf-8')
+    #encrypted_image_base64 = base64.b64encode(BytesIO(encrypted_data).read()).decode('utf-8')
+    with open(encrypted_image_path, 'wb') as encrypted_file:
+        encrypted_file.write(encrypted_data)
+
+    return render_template('index.html', original_image_base64=original_image_base64, encrypted_image_path=encrypted_image_path)
 
 @app.route('/decrypt', methods=['GET'])
 def decrypt_page():
@@ -87,10 +98,10 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/download/<password>')
-def download(password):
-
-    return send_file(decrypted_path, as_attachment=True, download_name='decrypted_image.jpg')
+@app.route('/download_encrypted/<filename>')
+def download_encrypted(filename):
+    encrypted_path = os.path.join('static/images', filename)
+    return send_file(encrypted_path, as_attachment=True, download_name=filename)
 
 if __name__ == '__main__':
     app.run(debug=True)

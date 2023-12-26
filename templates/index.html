@@ -17,6 +17,12 @@
         <br>
         <input type="submit" value="Encrypt and Upload">
     </form>
+    {% if original_image_base64 %}
+        <h2>Uploaded Image</h2>
+        <img src="data:image/png;base64,{{ original_image_base64 }}" alt="Uploaded Image">
+        <br>
+        <a href="{{ url_for('download_encrypted', filename='encrypted_image.png') }}" download>Download Encrypted Image</a>
+    {% endif %}
     <p>Already have an encrypted image? <a href="/decrypt">Decrypt it here</a>.</p>
 </body>
 </html>
