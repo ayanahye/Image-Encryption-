@@ -4,12 +4,11 @@ import os
 import base64
 import zlib
 from io import BytesIO
-from image_encryptor import encrypt_image, decrypt_image, encrypt_data, decrypt_data
+from image_encryptor import encrypt_data, decrypt_data
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 from cryptography.fernet import Fernet
-
 
 class image_processor:
     def __init__(self):
@@ -52,7 +51,9 @@ def upload():
     encrypted_data = encrypt_data(img, password)
     #print(encrypted_data)
 
-    return send_file(BytesIO(encrypted_data), as_attachment=True, download_name='encrypted_image.png')
+    file_name = f'encrypted_image_{img.width}x{img.height}.png'
+
+    return send_file(BytesIO(encrypted_data), as_attachment=True, download_name=file_name)
 
 
 @app.route('/decrypt', methods=['GET'])
@@ -71,6 +72,7 @@ def decrypt():
 
     password = request.form['key']
 
+    '''
     img_width = image_processor.get_width()
     img_height = image_processor.get_height()
 
@@ -84,7 +86,17 @@ def decrypt():
     img_data = base64.b64encode(img_bytes.getvalue()).decode('utf-8')
 
     return render_template('decrypt.html', decrypted_image=img_data)
+    '''
+    dimensions = file.filename.split('_')[-1].split('.')[0]
+    img_width, img_height = map(int, dimensions.split('x'))
 
+    img = decrypt_data(file.read(), password, img_width, img_height)
+
+    img_bytes = BytesIO()
+    img.save(img_bytes, format="PNG")
+    img_data = base64.b64encode(img_bytes.getvalue()).decode('utf-8')
+
+    return render_template('decrypt.html', decrypted_image=img_data)
 
 
 @app.route('/')

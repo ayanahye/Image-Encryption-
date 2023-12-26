@@ -23,34 +23,6 @@ def derive_key(password, salt):
     # convert key to base 64
     return base64.urlsafe_b64encode(kdf.derive(password.encode()))
 
-
-def encrypt_image(image_path, password):
-    img = Image.open(image_path)
-
-    img_bytes = BytesIO()
-    img.save(img_bytes, format="PNG")
-    img_data = img_bytes.getvalue()
-
-    compressed_data = zlib.compress(img_data)
-
-    encoded_data = base64.b64encode(compressed_data).decode('utf-8')
-
-    encrypted_data = encrypt_data(encoded_data, password)
-
-    return encrypted_data
-
-def decrypt_image(encrypted_data, password):
-    decoded_data = decrypt_data(encrypted_data, password)
-
-    compressed_data = base64.b64decode(decoded_data)
-
-    img_data = zlib.decompress(compressed_data)
-
-    img = Image.open(BytesIO(img_data))
-
-    return img
-
-
 def encrypt_data(image, password):
     img_bytes = image.tobytes()
 
