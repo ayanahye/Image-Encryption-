@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file, url_for
+from flask import Flask, render_template, request, send_file, url_for, abort
 from PIL import Image
 import os
 import base64
@@ -43,15 +43,20 @@ def upload():
 
     password = request.form['password']
 
-    img = Image.open(file)
+    try:
+        img = Image.open(file)
+    except Exception as e:
+        abort(400, f"Error opening the image: {e}")
 
     image_processor.set_width(img.width)
     image_processor.set_height(img.height)
 
-    encrypted_data = encrypt_data(img, password, img.width, img.height)
+    try:
+        encrypted_data = encrypt_data(img, password, img.width, img.height)
+    except Exception as e:
+        abort(500, f"Error encrypting the image: {e}")
     #print(encrypted_data)
 
-    file_name = f'encrypted_image.png'
     #encrypted_image_path = 'static/images/encrypted_image.png'
 
     #return send_file(BytesIO(encrypted_data), as_attachment=True, download_name=file_name)
@@ -87,7 +92,10 @@ def decrypt():
 
     password = request.form['key']
 
-    img = decrypt_data(file.read(), password)
+    try:
+        img = decrypt_data(file.read(), password)
+    except Exception as e:
+        abort(500, f"Error decrypting the image: {e}")
 
     img_bytes = BytesIO()
     img.save(img_bytes, format="PNG")
@@ -100,12 +108,6 @@ def decrypt():
 @app.route('/')
 def index():
     return render_template('index.html')
-
-
-@app.route('/download_encrypted/<filename>')
-def download_encrypted(filename):
-    encrypted_path = os.path.join('static/images', filename)
-    return send_file(encrypted_path, as_attachment=True, download_name=filename)
 
 if __name__ == '__main__':
     app.run(debug=True)

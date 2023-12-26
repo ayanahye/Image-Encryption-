@@ -1,5 +1,8 @@
-body {
-    margin: 0;
-    padding: 0;
-    background-color: red;
+
+.loading {
+    display: none;
+}
+
+.visible {
+    display: block;
 }
