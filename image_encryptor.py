@@ -23,40 +23,43 @@ def derive_key(password, salt):
     # convert key to base 64
     return base64.urlsafe_b64encode(kdf.derive(password.encode()))
 
-def encrypt_data(image, password):
+def encrypt_data(image, password, width, height):
     img_bytes = image.tobytes()
+
+    img_data_with_dimensions = width.to_bytes(4, 'big') + height.to_bytes(4, 'big') + img_bytes
 
     salt = os.urandom(16)
     key = derive_key(password, salt)
     fernet = Fernet(key)
 
-    encrypted_data = fernet.encrypt(img_bytes)
+    encrypted_data = fernet.encrypt(img_data_with_dimensions)
 
     #print(encrypted_data)
     return salt + encrypted_data
 
-def decrypt_data(encrypted_data, password, image_width, image_height):
-    # Modify this line in decrypt_data function
+def decrypt_data(encrypted_data, password):
 
     #print(encrypted_data)
     encrypted_data_bytes = encrypted_data
 
     salt = encrypted_data_bytes[:16]
-    encrypted_img_bytes = encrypted_data_bytes[16:]
+    encrypted_img_bytes_with_dimensions = encrypted_data_bytes[16:]
 
     key = derive_key(password, salt)
 
     fernet = Fernet(key)
 
-    decrypted_img_bytes = fernet.decrypt(encrypted_img_bytes)
+    img_data_with_dimensions = fernet.decrypt(encrypted_img_bytes_with_dimensions)
 
-    print("Original Image Size:", (image_width, image_height))
-    print("Decrypted Image Size:", Image.frombytes("RGB", (image_width, image_height), decrypted_img_bytes).size)
+    img_width = int.from_bytes(img_data_with_dimensions[:4], 'big')
+    img_height = int.from_bytes(img_data_with_dimensions[4:8], 'big')
 
-    Image.frombytes("RGB", (image_width, image_height), decrypted_img_bytes).save("decrypted.png")
+    img_bytes = img_data_with_dimensions[8:]
 
-    img = Image.frombytes("RGB", (image_width, image_height), decrypted_img_bytes)
-    img.save("original.png")
+    print("Original Image Size:", (img_width, img_height))
+
+    img = Image.frombytes("RGB", (img_width, img_height), img_bytes)
+    img.save("decrypted.png")
 
 
     return img
