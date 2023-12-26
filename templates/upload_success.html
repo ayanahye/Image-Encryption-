@@ -8,12 +8,21 @@
 <body>
     <h1>Upload Successful</h1>
     <p>Your image has been encrypted successfully.</p>
-    {% if uploaded_image %}
-    <img src="{{ uploaded_image }}" alt="Uploaded Image">
+    
+    {% if original_image %}
+    <h2>Original Image</h2>
+    <img src="{{ original_image }}" alt="Original Image">
     {% endif %}
-    <a href="{{ encrypted_path }}" download="encrypted_image.bin">
+    
+    {% if encrypted_image %}
+    <h2>Encrypted Image</h2>
+    <img src="data:image/jpeg;base64,{{ encrypted_image }}" alt="Encrypted Image">
+    {% endif %}
+
+    <a href="{{ encrypted_path }}" download="encrypted_image.jpg">
         Download Encrypted Image
     </a>
+    
     <p>Already have an encrypted image? <a href="/decrypt">Decrypt it here</a>.</p>
 </body>
 </html>

@@ -7,18 +7,20 @@
 </head>
 <body>
     <h1>Image Decryption</h1>
-    <form action="/decrypt" method="post" enctype="multipart/form-data">
-        <label for="file">Select the encrypted image:</label>
-        <input type="file" name="file" id="file" required>
+    <form method="post" enctype="multipart/form-data">
+        <label for="encrypted_image">Select Encrypted Image:</label>
+        <input type="file" name="encrypted_image" accept="image/*" required>
         <br>
-        <label for="password">Enter the password:</label>
-        <input type="password" name="password" id="password" required>
+        <label for="key">Enter Key:</label>
+        <input type="text" name="key" required>
         <br>
         <button type="submit">Decrypt</button>
     </form>
-
     {% if decrypted_image %}
-    <img src="data:image/jpeg;base64,{{ decrypted_image }}" alt="Decrypted Image">
+        <h2>Decrypted Image</h2>
+        <img src="data:image/png;base64,{{ decrypted_image }}" alt="Decrypted Image">
+    {% elif error %}
+        <p>{{ error }}</p>
     {% endif %}
 </body>
 </html>
