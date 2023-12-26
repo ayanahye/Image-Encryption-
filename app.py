@@ -9,6 +9,7 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 from cryptography.fernet import Fernet
+import re
 
 app = Flask(__name__)
 
@@ -43,6 +44,9 @@ def upload():
 
     password = request.form['password']
 
+    if not re.match("^[A-Za-z]+$", password):
+        return "Password must contain only letters."
+
     try:
         img = Image.open(file)
     except Exception as e:
@@ -55,20 +59,12 @@ def upload():
         encrypted_data = encrypt_data(img, password, img.width, img.height)
     except Exception as e:
         abort(500, f"Error encrypting the image: {e}")
-    #print(encrypted_data)
-
-    #encrypted_image_path = 'static/images/encrypted_image.png'
-
-    #return send_file(BytesIO(encrypted_data), as_attachment=True, download_name=file_name)
 
     original_image_data = BytesIO()
     img.save(original_image_data, format='PNG')
     original_image_data.seek(0)
 
     original_image_base64 = base64.b64encode(original_image_data.read()).decode('utf-8')
-    #encrypted_image_base64 = base64.b64encode(BytesIO(encrypted_data).read()).decode('utf-8')
-    #with open(encrypted_image_path, 'wb') as encrypted_file:
-        #encrypted_file.write(encrypted_data)
 
     return render_template(
         'index.html',
@@ -95,6 +91,9 @@ def decrypt():
         return "No file selected"
 
     password = request.form['password']
+
+    if not re.match("^[A-Za-z]+$", password):
+        return "Password must contain only letters."
 
     try:
         img = decrypt_data(file.read(), password)

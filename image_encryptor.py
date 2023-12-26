@@ -34,12 +34,10 @@ def encrypt_data(image, password, width, height):
 
     encrypted_data = fernet.encrypt(img_data_with_dimensions)
 
-    #print(encrypted_data)
     return salt + encrypted_data
 
 def decrypt_data(encrypted_data, password):
 
-    #print(encrypted_data)
     encrypted_data_bytes = encrypted_data
 
     salt = encrypted_data_bytes[:16]
@@ -56,11 +54,7 @@ def decrypt_data(encrypted_data, password):
 
     img_bytes = img_data_with_dimensions[8:]
 
-    print("Original Image Size:", (img_width, img_height))
-
     img = Image.frombytes("RGB", (img_width, img_height), img_bytes)
-    img.save("decrypted.png")
-
 
     return img
 

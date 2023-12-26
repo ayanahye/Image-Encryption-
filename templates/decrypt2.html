@@ -11,6 +11,20 @@
         function showLoading() {
             document.getElementById("loading-message").classList.add("visible");
         }
+
+        function validateForm() {
+        const password = document.getElementById("password").value;
+        const lettersOnly = /^[A-Za-z]+$/;
+
+        if (!password.match(lettersOnly)) {
+            alert("Password must contain only letters.");
+            return false;
+        }
+
+        showLoading();
+        return true;
+        
+    }
     </script>
 </head>
 <body>
@@ -26,7 +40,7 @@
       </div>  
       <div class="encrypt">
         <h1 class="title">Image Decryption</h1>
-        <form action="{{ url_for('decrypt') }}" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
+        <form action="{{ url_for('decrypt') }}" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
             <label for="file" class="file-label">
                 <div class="upload" id="uploaded-image-container">
                     {% if decrypted_image %}
