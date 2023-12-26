@@ -9,6 +9,7 @@ from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 import os
 from io import BytesIO
 from cryptography.fernet import Fernet
+import binascii
 
 def derive_key(password, salt):
     kdf = PBKDF2HMAC(
@@ -59,18 +60,23 @@ def encrypt_data(image, password):
 
     encrypted_data = fernet.encrypt(img_bytes)
 
-    return encrypted_data
+    #print(encrypted_data)
+    return salt + encrypted_data
 
 def decrypt_data(encrypted_data, password, image_width, image_height):
-    encrypted_data_bytes = base64.b64decode(encrypted_data)
-    salt = encrypted_data[:16]
+    # Modify this line in decrypt_data function
+
+    #print(encrypted_data)
+    encrypted_data_bytes = encrypted_data
+
+    salt = encrypted_data_bytes[:16]
     encrypted_img_bytes = encrypted_data_bytes[16:]
 
     key = derive_key(password, salt)
 
     fernet = Fernet(key)
 
-    decrypted_img_bytes = fernet.decrypt(encrypted_data)
+    decrypted_img_bytes = fernet.decrypt(encrypted_img_bytes)
 
     print("Original Image Size:", (image_width, image_height))
     print("Decrypted Image Size:", Image.frombytes("RGB", (image_width, image_height), decrypted_img_bytes).size)
