@@ -10,26 +10,67 @@
         function showLoading() {
             document.getElementById("loading-message").classList.add("visible");
         }
+
+        function previewImage(input) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById("uploaded-image").src = e.target.result;
+                    document.getElementById("uploaded-image-container").style.display = "block";
+                    document.getElementById("uploaded-image").style.display = "block";
+                    document.getElementById("upload-stat").style.display = "none";
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
     </script>
 </head>
 <body>
-    <h1>Image Encryption</h1>
-    <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
-        <label for="file">Choose an image:</label>
-        <input type="file" id="file" name="file" accept=".jpg, .jpeg, .png" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <input type="submit" value="Encrypt and Upload">
-    </form>
-    <div id="loading-message" class="loading">Processing... Please wait.</div>
-    {% if original_image_base64 %}
-        <h2>Uploaded Image</h2>
-        <img src="data:image/png;base64,{{ original_image_base64 }}" alt="Uploaded Image">
-        <br>
-        <a href="data:image/png;base64,{{ encrypted_image_data }}" download>Download Encrypted Image</a>
-    {% endif %}
-    <p>Already have an encrypted image? <a href="/decrypt">Decrypt it here</a>.</p>
+    <div class="container">
+      <div class="tutorial">
+        <h2>Steps</h2>
+        <ol>
+          <li>Upload an image to be encrypted</li>
+          <li>Add a password to be able to decrypt the image</li>
+          <li>Click "Encrypt and Upload"</li>
+          <li>Wait for image to be encrypted</li>
+          <li>Download the encrypted image</li>
+          <li>Follow the decrypt link, remember your password from step 2.</li>
+        </ol>
+      </div>  
+      <div class="encrypt">
+        <h1 class="title">Image Encryption</h1>
+        <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
+            <label for="file" class="file-label">
+                <div class="upload" id="uploaded-image-container">
+                    <p id="upload-stat">Upload</p>
+                    <img id="uploaded-image" src="data:image/png;base64,{{ original_image_base64 }}" alt="Uploaded Image">
+                    {% if original_image_base64 %}
+                        <img id="uploaded-image" src="data:image/png;base64,{{ original_image_base64 }}" alt="Uploaded Image">
+                    {% endif %}
+                </div>
+            </label>
+            <input class="input" type="file" id="file" name="file" accept=".jpg, .jpeg, .png" required onchange="previewImage(this)">
+            <br>
+            <label class="lb-pass" for="password">Password:</label>
+            <br>
+            <input class="pass" type="password" id="password" name="password" required>
+            <br>
+            <input type="submit" value="Encrypt and Upload">
+        </form>
+        <div class="down-enc">
+        {% if encrypted_image_data %}
+          <a href="data:image/png;base64,{{ encrypted_image_data }}" download>Download Encrypted Image</a>
+        {% endif %}
+        </div>
+        <div id="loading-message" class="loading">Processing... Please wait.</div>
+       </div>
+    </div>
+    <div class="decrypt">
+
+      <p>Already have an encrypted image? <a href="/decrypt">Decrypt it here</a>.</p>
+    </div>
 </body>
 </html>
