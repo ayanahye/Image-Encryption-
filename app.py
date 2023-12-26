@@ -76,9 +76,13 @@ def upload():
         encrypted_image_data=base64.b64encode(encrypted_data).decode('utf-8')
     )
 
+@app.route('/encrypt', methods=['GET'])
+def encrypt_page():
+    return render_template('index.html')    
+
 @app.route('/decrypt', methods=['GET'])
 def decrypt_page():
-    return render_template('decrypt.html')
+    return render_template('decrypt2.html')
 
 @app.route('/decrypt', methods=['POST'])
 def decrypt():
@@ -90,7 +94,7 @@ def decrypt():
     if file.filename == '':
         return "No file selected"
 
-    password = request.form['key']
+    password = request.form['password']
 
     try:
         img = decrypt_data(file.read(), password)
@@ -101,7 +105,7 @@ def decrypt():
     img.save(img_bytes, format="PNG")
     img_data = base64.b64encode(img_bytes.getvalue()).decode('utf-8')
 
-    return render_template('decrypt.html', decrypted_image=img_data)
+    return render_template('decrypt2.html', decrypted_image=img_data)
 
 
 

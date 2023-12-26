@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Decryption</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css')}}" rel="stylesheet" type="text/css" />
+    <script>
+        function showLoading() {
+            document.getElementById("loading-message").classList.add("visible");
+        }
+    </script>
+</head>
+<body>
+    <div class="container2">
+      <div class="tutorial">
+        <h2>Tutorial</h2>
+        <ol>
+          <li>Upload an image to be decrypted</li>
+          <li>Add a password to be able to decrypt the image</li>
+          <li>Click "Decrypt"</li>
+          <li>Wait for image to be decrypted</li>
+        </ol>
+      </div>  
+      <div class="encrypt">
+        <h1 class="title">Image Decryption</h1>
+        <form action="{{ url_for('decrypt') }}" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
+            <label for="file" class="file-label">
+                <div class="upload" id="uploaded-image-container">
+                    {% if decrypted_image %}
+                        <img id="uploaded-image2" src="data:image/png;base64,{{ decrypted_image }}" alt="Decrypted Image">
+                    {% elif error %}
+                        <p>{{ error }}</p>
+                    {% endif %}
+                </div>
+            </label>
+            <label class="select" for="encrypted_image">Select Encrypted Image:</label>
+            <input type="file" class="form-control-file" name="encrypted_image" accept=".jpg, .jpeg, .png" required>
+            <br>
+            <div class="get-pass">
+              <label class="lb-pass" for="password">Password:</label>
+              <input class="form-control pass" type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-custom">Decrypt</button>
+        </form>
+        <div id="loading-message" class="loading">Processing... Please wait.</div>
+       </div>
+    </div>
+    <div class="decrypt">
+      <p>Want to re-encrypt <a href="/encrypt">Encrypt here</a>.</p>
+    </div>
+</body>
+</html>

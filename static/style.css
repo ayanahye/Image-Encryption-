@@ -3,6 +3,7 @@ body {
     margin: 0;
     display: flex;
     flex-direction: column;
+    height: 100vh;
   }
   
   .loading {
@@ -13,10 +14,10 @@ body {
     display: block;
   }
   
-  .container {
+  .container2 {
     display: flex;
     width: 100vw;
-    height: 90vh;
+    height: 95vh;
     flex-direction: row;
   }
   
@@ -26,11 +27,16 @@ body {
   
   .title {
     text-align: center;
+    margin-bottom: 15px;
   }
   
-  .tutorial {
+  .tutorial, button {
     background-color: #632dc8;
     color: white;
+  }
+
+  a {
+    color: #632dc8;
   }
   
   .input {
@@ -40,7 +46,6 @@ body {
   .encrypt,
   .tutorial {
     flex: 1;
-    /* Equal flex distribution */
     box-sizing: border-box;
     padding: 20px;
   }
@@ -52,10 +57,12 @@ body {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-  }
-  
-  .lb-pass {
+    margin: auto; 
     margin-bottom: 15px;
+  }
+
+  .file-label {
+    display: block;
   }
   
   .pass {
@@ -73,11 +80,44 @@ body {
       max-height: 100%; 
       margin: auto;
   }
+
+  #uploaded-image2 {
+    display: block;
+    max-width: 100%; 
+      max-height: 100%; 
+      margin: auto;
+  }
   
   .down-enc {
     margin-top: 15px;
   }
 
 .decrypt {
-    text-align: center;
+  text-align: center;
+  padding-top: 5px;
+}
+
+
+.get-pass {
+  margin-top: 15px;
+}
+
+.btn-custom {
+  background-color: #632dc8;
+  border-color: #632dc8;
+  color: #fff; 
+}
+
+.btn-custom:hover {
+  background-color: #501a8e; 
+  border-color: #501a8e;
+  color: #fff; 
+}
+
+a:hover {
+  color: #501a8e;
+}
+
+li {
+  margin-bottom: 5px;
 }
