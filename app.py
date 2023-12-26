@@ -66,8 +66,10 @@ def upload():
     image_height = img.height
 
     encrypted_data = encrypt_data(img, password)
+    #print(encrypted_data)
 
-    return send_file(BytesIO(encrypted_data.encode('utf-8')), as_attachment=True, download_name='encrypted_image.png')
+    return send_file(BytesIO(encrypted_data), as_attachment=True, download_name='encrypted_image.png')
+
 
 
 @app.route('/download/<password>')
