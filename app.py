@@ -11,11 +11,49 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.fernet import Fernet
 
 
-# not good idea to make global variables, will fix
-image_width = None
-image_height = None
+class image_processor:
+    def __init__(self):
+        self.image_width = None
+        self.image_height = None
+
+    def get_height(self):
+        return self.image_height
+    
+    def get_width(self):
+        return self.image_width
+
+    def set_height(self, value):
+        self.image_height = value
+
+    def set_width(self, value):
+        self.image_width = value
 
 app = Flask(__name__)
+
+image_processor = image_processor()
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    if 'file' not in request.files:
+        return "No file provided"
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return "No file selected"
+
+    password = request.form['password']
+
+    img = Image.open(file)
+
+    image_processor.set_width(img.width)
+    image_processor.set_height(img.height)
+
+    encrypted_data = encrypt_data(img, password)
+    #print(encrypted_data)
+
+    return send_file(BytesIO(encrypted_data), as_attachment=True, download_name='encrypted_image.png')
+
 
 @app.route('/decrypt', methods=['GET'])
 def decrypt_page():
@@ -33,7 +71,13 @@ def decrypt():
 
     password = request.form['key']
 
-    img = decrypt_data(file.read(), password, image_width, image_height)
+    img_width = image_processor.get_width()
+    img_height = image_processor.get_height()
+
+    print(img_width)
+    print(img_height)
+
+    img = decrypt_data(file.read(), password, img_width, img_height)
 
     img_bytes = BytesIO()
     img.save(img_bytes, format="PNG")
@@ -46,30 +90,6 @@ def decrypt():
 @app.route('/')
 def index():
     return render_template('index.html')
-
-@app.route('/upload', methods=['POST'])
-def upload():
-    if 'file' not in request.files:
-        return "No file provided"
-
-    file = request.files['file']
-
-    if file.filename == '':
-        return "No file selected"
-
-    password = request.form['password']
-
-    img = Image.open(file)
-
-    global image_width, image_height
-    image_width = img.width
-    image_height = img.height
-
-    encrypted_data = encrypt_data(img, password)
-    #print(encrypted_data)
-
-    return send_file(BytesIO(encrypted_data), as_attachment=True, download_name='encrypted_image.png')
-
 
 
 @app.route('/download/<password>')
