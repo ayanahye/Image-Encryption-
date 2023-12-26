@@ -52,7 +52,7 @@ def upload():
     #print(encrypted_data)
 
     file_name = f'encrypted_image.png'
-    encrypted_image_path = 'static/images/encrypted_image.png'
+    #encrypted_image_path = 'static/images/encrypted_image.png'
 
     #return send_file(BytesIO(encrypted_data), as_attachment=True, download_name=file_name)
 
@@ -62,10 +62,14 @@ def upload():
 
     original_image_base64 = base64.b64encode(original_image_data.read()).decode('utf-8')
     #encrypted_image_base64 = base64.b64encode(BytesIO(encrypted_data).read()).decode('utf-8')
-    with open(encrypted_image_path, 'wb') as encrypted_file:
-        encrypted_file.write(encrypted_data)
+    #with open(encrypted_image_path, 'wb') as encrypted_file:
+        #encrypted_file.write(encrypted_data)
 
-    return render_template('index.html', original_image_base64=original_image_base64, encrypted_image_path=encrypted_image_path)
+    return render_template(
+        'index.html',
+        original_image_base64=original_image_base64,
+        encrypted_image_data=base64.b64encode(encrypted_data).decode('utf-8')
+    )
 
 @app.route('/decrypt', methods=['GET'])
 def decrypt_page():
